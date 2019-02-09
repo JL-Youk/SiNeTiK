@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>ta mere le pointeur</title>
+    </head>
+
+    <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+          var splitted;
+          var socket = io.connect(':8080');
+          socket.on('message', function(message) {
+            console.log(message);
+          })
+          // socket.on('user', function(user) {
+          //   $("body").append( "<div class='truc' id='utilisateur"+user+"'><img src='https://www.shareicon.net/data/128x128/2016/06/11/586666_cursor_512x512.png' alt=''>"+user+"</div>" );
+          // })
+          socket.on('nouveaudeplacement', function(nouveaudeplacement) {
+
+            if($('#utilisateur'+nouveaudeplacement.idUser).length == 0) {
+              $("body").append( "<div class='truc' id='utilisateur"+nouveaudeplacement.idUser+"'><img src='https://www.shareicon.net/data/128x128/2016/06/11/586666_cursor_512x512.png' alt=''>"+pseudo+"</div>" );
+            }
+
+            $('#utilisateur'+nouveaudeplacement.idUser).css('left',nouveaudeplacement.positionX);
+            $('#utilisateur'+nouveaudeplacement.idUser).css('top',nouveaudeplacement.positionY);
+          })
+
+          var pseudo = prompt('Quel est votre pseudo ?');
+          socket.emit('petit_nouveau', pseudo);
+
+          var position = new Array();
+          $( "html" ).mousemove(function(event) {
+            socket.emit('position', {'X':event.pageX,'Y':event.pageY});
+            });
+        </script>
+    </body>
+    <style media="screen">
+      .truc{
+        position: absolute;
+      }
+      .truc img{
+        width: 20px;
+      }
+    </style>
+</html>
